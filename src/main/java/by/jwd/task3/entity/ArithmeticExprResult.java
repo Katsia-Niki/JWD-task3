@@ -6,19 +6,22 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class Punctuation implements TextComponent {
+public class ArithmeticExprResult implements TextComponent {
     static Logger logger = LogManager.getLogger();
 
-    private char punctuation;
-    private TextComponentType type;
+    private double result;
+    private TextComponentType type = TextComponentType.ARITHMETIC_EXPR_RESULT;
 
-    public Punctuation(char punctuation, TextComponentType type) {
-        this.punctuation = punctuation;
-        this.type = type;
+    public ArithmeticExprResult(double result) {
+        this.result = result;
     }
 
-    public TextComponentType getType() {
-        return type;
+    public double getResult() {
+        return result;
+    }
+
+    public void setResult(double result) {
+        this.result = result;
     }
 
     @Override
@@ -44,13 +47,24 @@ public class Punctuation implements TextComponent {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Punctuation that = (Punctuation) o;
+        ArithmeticExprResult that = (ArithmeticExprResult) o;
 
-        return punctuation == that.punctuation;
+        if (Double.compare(that.result, result) != 0) return false;
+        return type == that.type;
     }
 
     @Override
     public int hashCode() {
-        return punctuation;
+        int result1;
+        long temp;
+        temp = Double.doubleToLongBits(result);
+        result1 = (int) (temp ^ (temp >>> 32));
+        result1 = 31 * result1 + (type != null ? type.hashCode() : 0);
+        return result1;
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(result);
     }
 }

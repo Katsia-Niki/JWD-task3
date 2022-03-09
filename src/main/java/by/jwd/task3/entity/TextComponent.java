@@ -9,5 +9,5 @@ public interface TextComponent {
 
     boolean remove(TextComponent component);
 
-    List<TextComponent> getChildren() throws TextException;
+    List<TextComponent> getChildren();
 }

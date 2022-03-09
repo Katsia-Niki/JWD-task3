@@ -10,9 +10,15 @@ public class Letter implements TextComponent {
     static Logger logger = LogManager.getLogger();
 
     private char letter;
+    private TextComponentType type;
 
-    public Letter(char letter) {
+    public Letter(char letter, TextComponentType type) {
         this.letter = letter;
+        this.type = type;
+    }
+
+    public TextComponentType getType() {
+        return type;
     }
 
     @Override
@@ -28,9 +34,9 @@ public class Letter implements TextComponent {
     }
 
     @Override
-    public List<TextComponent> getChildren() throws TextException {
+    public List<TextComponent> getChildren() {
         logger.error("Not supported operation to this component. ");
-        throw new TextException("Not supported operation to this component. ");
+        throw new UnsupportedOperationException("Not supported operation to this component. ");
     }
 
     @Override

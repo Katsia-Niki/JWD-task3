@@ -29,7 +29,7 @@ public class TextComposite implements TextComponent {
     }
 
     @Override
-    public List<TextComponent> getChildren() throws TextException {
+    public List<TextComponent> getChildren() {
         return new ArrayList<TextComponent>(components);
     }
 

@@ -1,13 +1,14 @@
 package by.jwd.task3.entity;
 
 public enum TextComponentType {
-    TEXT("",""),
-    PHARAGRAPH("\t", "\n"),
-    SENTENCE("", ""),
-    LEXEM("", " "),
-    WORD("", ""),
-    LETTER("", ""),
-    PUNCTUATION("", "");
+    TEXT,
+    PARAGRAPH("\t", "\n"),
+    SENTENCE,
+    LEXEME("", " "),
+    WORD,
+    LETTER,
+    PUNCTUATION,
+    ARITHMETIC_EXPR_RESULT;
 
     private final String prefix;
     private final String postfix;
@@ -15,6 +16,11 @@ public enum TextComponentType {
     TextComponentType(String prefix, String postfix){
         this.prefix = prefix;
         this.postfix = postfix;
+    }
+
+    TextComponentType() {
+        prefix = "";
+        postfix = "";
     }
 
     public String getPrefix() {
