@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 public class ParagraphParser extends AbstractTextParser {
 
-    private static final String PARAGRAPH_SPLITTER_REGEX = "(^|\\n)(\\t|\\s{4})";
+    private static final String PARAGRAPH_SPLITTER_REGEX = "(^|\\n)";
 
     public ParagraphParser() {
         this.nextParser = new SentenceParser();
@@ -17,6 +17,7 @@ public class ParagraphParser extends AbstractTextParser {
 
     @Override
     public void parse(TextComponent component, String data) {
+
         List<String> paragraphs = Stream.of(data.split(PARAGRAPH_SPLITTER_REGEX))
                 .filter(p -> !p.isEmpty())
                 .toList();

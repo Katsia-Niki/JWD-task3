@@ -12,8 +12,9 @@ public class ArithmeticExprResult implements TextComponent {
     private double result;
     private TextComponentType type = TextComponentType.ARITHMETIC_EXPR_RESULT;
 
-    public ArithmeticExprResult(double result) {
+    public ArithmeticExprResult(double result, TextComponentType type) {
         this.result = result;
+        this.type = type;
     }
 
     public double getResult() {
@@ -65,6 +66,9 @@ public class ArithmeticExprResult implements TextComponent {
 
     @Override
     public String toString() {
-        return String.valueOf(result);
+        final StringBuilder sb = new StringBuilder(type.getPrefix());
+        sb.append(result);
+        sb.append(type.getPostfix());
+        return sb.toString();
     }
 }

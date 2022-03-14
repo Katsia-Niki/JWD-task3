@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
+
 
 public class TextComposite implements TextComponent {
     static Logger logger = LogManager.getLogger();
@@ -57,8 +57,9 @@ public class TextComposite implements TextComponent {
 
     @Override
     public String toString() {
-        return new StringJoiner(",", "TextComposite {", "}")
-                .add("components=" + components)
-                .add("type=" + type).toString();
+        final StringBuilder sb = new StringBuilder(type.getPrefix());
+        components.forEach(c -> sb.append(c.toString()));
+        sb.append(type.getPostfix());
+        return sb.toString();
     }
 }

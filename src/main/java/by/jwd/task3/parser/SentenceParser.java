@@ -12,11 +12,12 @@ public class SentenceParser extends AbstractTextParser {
     private static final String SENTENCE_REGEX = "(\\p{Upper}|[А-ЯЁ]).+?(\\.|\\?|\\!|\\u2026)(\\s|$)";
 
     public SentenceParser() {
-        this.nextParser = new LexemeParser();
+        this.nextParser = new LexemeAndExpressionParser();
     }
 
     @Override
     public void parse(TextComponent component, String data) {
+
         Pattern pattern = Pattern.compile(SENTENCE_REGEX);
         Matcher matcher = pattern.matcher(data);
 

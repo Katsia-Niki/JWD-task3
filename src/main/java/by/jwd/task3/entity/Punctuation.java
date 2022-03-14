@@ -53,4 +53,9 @@ public class Punctuation implements TextComponent {
     public int hashCode() {
         return punctuation;
     }
+
+    @Override
+    public String toString() {
+        return String.valueOf(punctuation);
+    }
 }

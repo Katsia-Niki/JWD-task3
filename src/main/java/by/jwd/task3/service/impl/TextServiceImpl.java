@@ -10,10 +10,14 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.OptionalInt;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class TextServiceImpl implements TextService {
     static Logger logger = LogManager.getLogger();
+
+    private static final String VOWEL_REGEX = "(?iu)[aeiouyаеёионыэюя]";
+    private static final String CONSONANT_REGEX = "(?iu)[a-zа-я&&[^aeiouyаеёионыэюя]]";
 
     @Override
     public List<TextComponent> sortParagraphBySentenceCount(TextComponent text) throws TextException {
@@ -46,16 +50,18 @@ public class TextServiceImpl implements TextService {
                 .toList();
         OptionalInt optionalMaxLengthWord = sentences.stream()
                 .flatMap(s -> s.getChildren().stream())
+                .filter(l -> !(l instanceof  ArithmeticExprResult))
                 .flatMap(l -> l.getChildren().stream())
-                .filter(w -> (!(w instanceof Punctuation) && !(w instanceof ArithmeticExprResult)))
+                .filter(w -> !(w instanceof Punctuation))
                 .mapToInt(w -> w.getChildren().size())
                 .max();
         int maxLengthWord = optionalMaxLengthWord.orElseThrow(() -> new TextException("Incorrect data."));
 
         List<TextComponent> sentencesWithMaxLengthWord = sentences.stream()
                 .filter(s -> s.getChildren().stream()
+                        .filter(l -> !(l instanceof  ArithmeticExprResult))
                         .anyMatch(l -> l.getChildren().stream()
-                                .filter(w -> (!(w instanceof Punctuation) && !(w instanceof ArithmeticExprResult)))
+                                .filter(w -> (!(w instanceof Punctuation)))
                                 .anyMatch(w -> w.getChildren().size() == maxLengthWord)))
                 .toList();
 
@@ -73,7 +79,7 @@ public class TextServiceImpl implements TextService {
             for (TextComponent sentence : paragraph.getChildren()) {
                 int wordCount = 0;
                 for (TextComponent lexeme : sentence.getChildren()) {
-                    if (!(lexeme instanceof Punctuation) && !(lexeme instanceof ArithmeticExprResult)) {
+                    if (!(lexeme instanceof ArithmeticExprResult)) {
                         wordCount++;
                     }
                 }
@@ -95,10 +101,11 @@ public class TextServiceImpl implements TextService {
         Map<String, Integer> sameWords = text.getChildren().stream()
                 .flatMap(p -> p.getChildren().stream())
                 .flatMap(s -> s.getChildren().stream())
+                .filter(l -> !(l instanceof  ArithmeticExprResult))
                 .flatMap(l -> l.getChildren().stream())
-                .filter(w -> (!(w instanceof Punctuation) && !(w instanceof ArithmeticExprResult)))
+                .filter(w -> !(w instanceof Punctuation))
                 .map(w -> w.toString().toLowerCase())
-                .collect(Collectors.toMap(str -> str, i -> 1, (i1, i2) -> i1 + i2));
+                .collect(Collectors.toMap(str -> str, i -> 1, Integer::sum));
 
         sameWords.values().removeIf(i -> i == 1);
 
@@ -106,13 +113,45 @@ public class TextServiceImpl implements TextService {
     }
 
     @Override
-    public long countConsonants(TextComponent text) {
-        return 0;
+    public long countConsonants(TextComponent text) throws TextException {
+        if (!(validateParameter(text))) {
+            logger.error("Given component is not text.");
+            throw new TextException("Given component is not text.");
+        }
+        Pattern pattern = Pattern.compile(CONSONANT_REGEX);
+
+        long counter = text.getChildren().stream()
+                .flatMap(p -> p.getChildren().stream())
+                .flatMap(s -> s.getChildren().stream())
+                .filter(l -> !(l instanceof  ArithmeticExprResult))
+                .flatMap(l -> l.getChildren().stream())
+                .filter(w -> !(w instanceof Punctuation))
+                .flatMap(w -> w.getChildren().stream())
+                .map(let -> let.toString())
+                .filter(let -> pattern.matcher(let).matches())
+                .count();
+        return counter;
     }
 
     @Override
-    public long countVowels(TextComponent text) {
-        return 0;
+    public long countVowels(TextComponent text) throws TextException {
+        if (!(validateParameter(text))) {
+            logger.error("Given component is not text.");
+            throw new TextException("Given component is not text.");
+        }
+        Pattern pattern = Pattern.compile(VOWEL_REGEX);
+
+        long counter = text.getChildren().stream()
+                .flatMap(p -> p.getChildren().stream())
+                .flatMap(s -> s.getChildren().stream())
+                .filter(l -> !(l instanceof  ArithmeticExprResult))
+                .flatMap(l -> l.getChildren().stream())
+                .filter(w -> !(w instanceof Punctuation))
+                .flatMap(w -> w.getChildren().stream())
+                .map(let -> let.toString())
+                .filter(let -> pattern.matcher(let).matches())
+                .count();
+        return counter;
     }
 
     private boolean validateParameter(TextComponent parameter) {

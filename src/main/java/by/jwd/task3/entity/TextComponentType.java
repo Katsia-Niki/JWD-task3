@@ -8,7 +8,7 @@ public enum TextComponentType {
     WORD,
     LETTER,
     PUNCTUATION,
-    ARITHMETIC_EXPR_RESULT;
+    ARITHMETIC_EXPR_RESULT("", " ");
 
     private final String prefix;
     private final String postfix;
