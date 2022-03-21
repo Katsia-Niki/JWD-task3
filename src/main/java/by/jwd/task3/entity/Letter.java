@@ -40,6 +40,12 @@ public class Letter implements TextComponent {
     }
 
     @Override
+    public TextComponent getChildByIndex(int index) {
+        logger.error("Not supported operation to this component. ");
+        throw new UnsupportedOperationException("Not supported operation to this component. ");
+    }
+
+    @Override
     public int hashCode() {
         int prime = 31;
         int result = 1;

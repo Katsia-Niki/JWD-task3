@@ -16,7 +16,11 @@ public interface TextService {
 
     Map<String, Integer> findAndCountSameWords(TextComponent text) throws TextException;
 
-    long countConsonants(TextComponent text) throws TextException;
+    long countConsonantsInText(TextComponent text) throws TextException; //works only with type TEXT
 
-    long countVowels(TextComponent text) throws TextException;
+    long countVowelsInText(TextComponent text) throws TextException; //works only with type TEXT
+
+    long countConsonants(TextComponent text) throws TextException; //works with any type of TextComposite
+
+    long countVowels(TextComponent text) throws TextException; //works with any type of TextComposite
 }

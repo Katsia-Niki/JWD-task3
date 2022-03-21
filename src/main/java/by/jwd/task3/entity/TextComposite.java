@@ -33,6 +33,11 @@ public class TextComposite implements TextComponent {
         return new ArrayList<TextComponent>(components);
     }
 
+    @Override
+    public TextComponent getChildByIndex(int index) {
+        return components.get(index);
+    }
+
     public TextComponentType getType() {
         return type;
     }

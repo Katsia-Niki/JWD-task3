@@ -40,6 +40,12 @@ public class Punctuation implements TextComponent {
     }
 
     @Override
+    public TextComponent getChildByIndex(int index) {
+        logger.error("Not supported operation to this component. ");
+        throw new UnsupportedOperationException("Not supported operation to this component. ");
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

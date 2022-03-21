@@ -13,7 +13,6 @@ import java.nio.file.Paths;
 public class TextReaderImpl implements TextReader {
     static Logger logger = LogManager.getLogger();
 
-
     @Override
     public String readText(String pathToFile) throws TextException {
 
@@ -22,7 +21,6 @@ public class TextReaderImpl implements TextReader {
             logger.error("File " + pathToFile + " not found.");
             throw new TextException("File " + pathToFile + " not found.");
         }
-
         String text = "";
         try {
             text = Files.readString(path);

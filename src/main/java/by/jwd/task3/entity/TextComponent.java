@@ -10,4 +10,6 @@ public interface TextComponent {
     boolean remove(TextComponent component);
 
     List<TextComponent> getChildren();
+
+    TextComponent getChildByIndex(int index);
 }

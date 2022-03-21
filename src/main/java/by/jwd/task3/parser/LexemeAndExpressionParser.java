@@ -16,9 +16,11 @@ import java.util.regex.Pattern;
 public class LexemeAndExpressionParser extends AbstractTextParser {
 
     private static final String LEXEME_SPLITTER_REGEX = "\\s";
-    private static final String EXPRESSION_REGEX = "([0-9]+[\\+\\-\\*\\/]{1}[0-9]+)+([\\+\\-\\*\\/]{1}[0-9]+)*";
+    private static final String EXPRESSION_REGEX = "(\\d+[\\+\\-\\*\\/]{1}[0-9]+)+([\\+\\-\\*\\/]{1}\\d+)*";
+    private static final String STRING_JOINER_DELIMITER = "\s";
 
     public LexemeAndExpressionParser() {
+
         this.nextParser = new WordAndPunctuationParser();
     }
 
@@ -34,7 +36,6 @@ public class LexemeAndExpressionParser extends AbstractTextParser {
                 lexemes[i] = calculate(lexemes[i]);
                 TextComponent lexemeComponent = new ArithmeticExprResult(Double.parseDouble(lexemes[i]), TextComponentType.ARITHMETIC_EXPR_RESULT);
                 component.add(lexemeComponent);
-
             } else {
                 TextComponent lexemeComponent = new TextComposite(TextComponentType.LEXEME);
                 component.add(lexemeComponent);
@@ -45,14 +46,14 @@ public class LexemeAndExpressionParser extends AbstractTextParser {
 
     private String calculate(String expr) {
         List<String> expressions = ExpressionParser.parse(expr);
+        StringJoiner exprString = new StringJoiner(STRING_JOINER_DELIMITER);
 
-        StringJoiner exprString = new StringJoiner(" ");
         for (String e : expressions) {
             exprString.add(e);
         }
-
         String polishNotationExpr = exprString.toString();
         String result = "";
+
         if (ExpressionParser.flag) {
             PolishNotationCalculator calculator = PolishNotationCalculator.getInstance();
 

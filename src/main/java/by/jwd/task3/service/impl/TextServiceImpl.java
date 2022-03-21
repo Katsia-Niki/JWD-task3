@@ -6,10 +6,10 @@ import by.jwd.task3.service.TextService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.OptionalInt;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -27,13 +27,10 @@ public class TextServiceImpl implements TextService {
             throw new TextException("Given component is not text.");
         }
         List<TextComponent> paragraphs = text.getChildren();
-        paragraphs.sort(new Comparator<TextComponent>() {
-            @Override
-            public int compare(TextComponent one, TextComponent other) {
-                Integer sizeOne = one.getChildren().size();
-                Integer sizeOther = other.getChildren().size();
-                return sizeOne.compareTo(sizeOther);
-            }
+        paragraphs.sort((one, other) -> {
+            Integer sizeOne = one.getChildren().size();
+            Integer sizeOther = other.getChildren().size();
+            return sizeOne.compareTo(sizeOther);
         });
         return paragraphs;
     }
@@ -50,7 +47,7 @@ public class TextServiceImpl implements TextService {
                 .toList();
         OptionalInt optionalMaxLengthWord = sentences.stream()
                 .flatMap(s -> s.getChildren().stream())
-                .filter(l -> !(l instanceof  ArithmeticExprResult))
+                .filter(l -> !(l instanceof ArithmeticExprResult))
                 .flatMap(l -> l.getChildren().stream())
                 .filter(w -> !(w instanceof Punctuation))
                 .mapToInt(w -> w.getChildren().size())
@@ -59,7 +56,7 @@ public class TextServiceImpl implements TextService {
 
         List<TextComponent> sentencesWithMaxLengthWord = sentences.stream()
                 .filter(s -> s.getChildren().stream()
-                        .filter(l -> !(l instanceof  ArithmeticExprResult))
+                        .filter(l -> !(l instanceof ArithmeticExprResult))
                         .anyMatch(l -> l.getChildren().stream()
                                 .filter(w -> (!(w instanceof Punctuation)))
                                 .anyMatch(w -> w.getChildren().size() == maxLengthWord)))
@@ -101,7 +98,7 @@ public class TextServiceImpl implements TextService {
         Map<String, Integer> sameWords = text.getChildren().stream()
                 .flatMap(p -> p.getChildren().stream())
                 .flatMap(s -> s.getChildren().stream())
-                .filter(l -> !(l instanceof  ArithmeticExprResult))
+                .filter(l -> !(l instanceof ArithmeticExprResult))
                 .flatMap(l -> l.getChildren().stream())
                 .filter(w -> !(w instanceof Punctuation))
                 .map(w -> w.toString().toLowerCase())
@@ -113,7 +110,7 @@ public class TextServiceImpl implements TextService {
     }
 
     @Override
-    public long countConsonants(TextComponent text) throws TextException {
+    public long countConsonantsInText(TextComponent text) throws TextException { //works only with type TEXT
         if (!(validateParameter(text))) {
             logger.error("Given component is not text.");
             throw new TextException("Given component is not text.");
@@ -123,7 +120,7 @@ public class TextServiceImpl implements TextService {
         long counter = text.getChildren().stream()
                 .flatMap(p -> p.getChildren().stream())
                 .flatMap(s -> s.getChildren().stream())
-                .filter(l -> !(l instanceof  ArithmeticExprResult))
+                .filter(l -> !(l instanceof ArithmeticExprResult))
                 .flatMap(l -> l.getChildren().stream())
                 .filter(w -> !(w instanceof Punctuation))
                 .flatMap(w -> w.getChildren().stream())
@@ -134,7 +131,7 @@ public class TextServiceImpl implements TextService {
     }
 
     @Override
-    public long countVowels(TextComponent text) throws TextException {
+    public long countVowelsInText(TextComponent text) throws TextException { //works only with type TEXT
         if (!(validateParameter(text))) {
             logger.error("Given component is not text.");
             throw new TextException("Given component is not text.");
@@ -144,13 +141,63 @@ public class TextServiceImpl implements TextService {
         long counter = text.getChildren().stream()
                 .flatMap(p -> p.getChildren().stream())
                 .flatMap(s -> s.getChildren().stream())
-                .filter(l -> !(l instanceof  ArithmeticExprResult))
+                .filter(l -> !(l instanceof ArithmeticExprResult))
                 .flatMap(l -> l.getChildren().stream())
                 .filter(w -> !(w instanceof Punctuation))
                 .flatMap(w -> w.getChildren().stream())
                 .map(let -> let.toString())
                 .filter(let -> pattern.matcher(let).matches())
                 .count();
+        return counter;
+    }
+
+    @Override
+    public long countConsonants(TextComponent composite) throws TextException { //works with any type of TextComposite
+        if (!(composite instanceof TextComposite)) {
+            logger.error("Given component is not TextComposite.");
+            throw new TextException("Given component is not TextComposite.");
+        }
+        long counter = 0L;
+        Pattern pattern = Pattern.compile(CONSONANT_REGEX);
+        TextComponent parent = composite;
+        List<TextComponent> children = parent.getChildren();
+
+        for (TextComponent child : children) {
+            if (child instanceof Letter) {
+                Matcher matcher = pattern.matcher(child.toString());
+                if (matcher.matches()) {
+                    counter++;
+                }
+            } else if (!(child instanceof Punctuation)) {
+                parent = child;
+                counter += countConsonants(parent);
+            }
+        }
+        return counter;
+    }
+
+    @Override
+    public long countVowels(TextComponent composite) throws TextException { //works with any type of TextComposite
+        if (!(composite instanceof TextComposite)) {
+            logger.error("Given component is not TextComposite.");
+            throw new TextException("Given component is not TextComposite.");
+        }
+        long counter = 0L;
+        Pattern pattern = Pattern.compile(VOWEL_REGEX);
+        TextComponent parent = composite;
+        List<TextComponent> children = parent.getChildren();
+
+        for (TextComponent child : children) {
+            if (child instanceof Letter) {
+                Matcher matcher = pattern.matcher(child.toString());
+                if (matcher.matches()) {
+                    counter++;
+                }
+            } else if (!(child instanceof Punctuation)) {
+                parent = child;
+                counter += countVowels(parent);
+            }
+        }
         return counter;
     }
 

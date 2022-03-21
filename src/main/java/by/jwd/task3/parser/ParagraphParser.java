@@ -19,7 +19,6 @@ public class ParagraphParser extends AbstractTextParser {
     public void parse(TextComponent component, String data) {
 
         List<String> paragraphs = Stream.of(data.split(PARAGRAPH_SPLITTER_REGEX))
-                .filter(p -> !p.isEmpty())
                 .toList();
 
         for (String paragraph : paragraphs) {
